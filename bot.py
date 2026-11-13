@@ -7,9 +7,9 @@ async def handle_image_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if text and (text.startswith("http://") or text.startswith("https://")):
         if text.lower().endswith(('.png', '.jpg', '.jpeg', '.webp', '.bmp')):
             try:
-                await update.message.reply_photo(photo=text, caption="🆕 Pati (2026)🔥
+                await update.message.reply_photo(photo=text, caption="🆕 Title (2026)🔥
 
-➡️  4k ☄️ Added❗️
+➡️  4k ☄️ Size GiB❗️
 
 📥 Added on HDHub4u🕺")
             except Exception as e:
