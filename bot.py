@@ -7,11 +7,11 @@ async def handle_image_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if text and (text.startswith("http://") or text.startswith("https://")):
         try:
             caption_text = (
-                "🆕 Title (2026)🔥\n\n"
+                "🆕 **Title** (2026)🔥\n\n"
                 " "
-                "➡️ 4k ☄️ Added❗️\n\n"
+                "➡️ **4k** ☄️ Added❗️\n\n"
                 " "
-                "📥 Added on HDHub4u🕺"
+                "📥 Added on **HDHub4u**🕺"
             )
             await update.message.reply_photo(photo=text, caption=caption_text)
         except Exception as e:
