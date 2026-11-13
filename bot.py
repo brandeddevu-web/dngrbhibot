@@ -8,12 +8,12 @@ USER_STATES = {}
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
     text = update.message.text
-    photo = update.message.photo
+
+    if not text:
+        return
 
     # 1. Agar user ne movie/series ka naam diya hai
     if user_id in USER_STATES and USER_STATES[user_id]["step"] == "waiting_for_title":
-        if not text:
-            return
         USER_STATES[user_id]["movie_title"] = text.strip()
         USER_STATES[user_id]["step"] = "waiting_for_year"
         
@@ -22,8 +22,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # 2. Agar user ne year/season ka reply diya hai
     elif user_id in USER_STATES and USER_STATES[user_id]["step"] == "waiting_for_year":
-        if not text:
-            return
         USER_STATES[user_id]["movie_year"] = text.strip()
         USER_STATES[user_id]["step"] = "waiting_for_content"
         
@@ -32,30 +30,28 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # 3. Agar user ne content ka reply diya hai
     elif user_id in USER_STATES and USER_STATES[user_id]["step"] == "waiting_for_content":
-        if not text:
-            return
         image_url = USER_STATES[user_id]["image_url"]
         movie_title = USER_STATES[user_id]["movie_title"]
-        movie_year = USER_STATES[user_id]["movie_year"]
-        content_text = text.strip()
+        movie_year = USER_STATES[user_id]["movie_year"] # Yeh '2026' ko replace karega
+        content_text = text.strip() # Yeh '4k' ko replace karega
         
         # State clear kar dete hain
         del USER_STATES[user_id]
 
         try:
-            # Pehla caption
+            # Pehla caption (movie_year aur content_text ke sath)
             caption_text_1 = (
                 f"<tg-emoji emoji-id=\"6312234398943023797\">🆕</tg-emoji> <b>{movie_title}</b> ({movie_year}) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>\n\n"
-                "<blockquote>" f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> <b>4k</b> <tg-emoji emoji-id=\"5224607267797606837\">☄️</tg-emoji{content_text} Added <tg-emoji emoji-id=\"6312336919812379988\">✔️</tg-emoji>" "</blockquote>\n\n"
+                "<blockquote>" f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> <b>{content_text}</b> <tg-emoji emoji-id=\"5224607267797606837\">☄️</tg-emoji> Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>" "</blockquote>\n\n"
                 " "
                 "<tg-emoji emoji-id=\"6096080291347042802\">📥</tg-emoji> Added on <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
             )
             
-            # Dusra caption
+            # Dusra caption (movie_year aur content_text ke sath)
             caption_text_2 = (
                 "<tg-emoji emoji-id=\"6159046264253059501\">🤩</tg-emoji><tg-emoji emoji-id=\"6156621398732182933\">🤩</tg-emoji><tg-emoji emoji-id=\"6158777532444316203\">🤩</tg-emoji><tg-emoji emoji-id=\"6156843319692367185\">🤩</tg-emoji><tg-emoji emoji-id=\"6156552632010806111\">🤩</tg-emoji><tg-emoji emoji-id=\"6156520617324582815\">🤩</tg-emoji><tg-emoji emoji-id=\"6156728837339091660\">🤩</tg-emoji><tg-emoji emoji-id=\"6156477856630181980\">🤩</tg-emoji><tg-emoji emoji-id=\"6159046264253059501\">🤩</tg-emoji>\n\n"
                 f"<tg-emoji emoji-id=\"6312234398943023797\">🆕</tg-emoji> <b>{movie_title}</b> ({movie_year}) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>\n\n"
-                "<blockquote>" f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> <b>4k</b> <tg-emoji emoji-id=\"5224607267797606837\">☄️</tg-emoji>{content_text} Added <tg-emoji emoji-id=\"6312336919812379988\">✔️</tg-emoji>" "</blockquote>\n\n"
+                "<blockquote>" f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> <b>{content_text}</b> <tg-emoji emoji-id=\"5224607267797606837\">☄️</tg-emoji> Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>" "</blockquote>\n\n"
                 " "
                 "<tg-emoji emoji-id=\"6096080291347042802\">📥</tg-emoji> Added on <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
             )
@@ -75,20 +71,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
 
         except Exception as e:
-            await update.message.reply_text("Image load karne mein error aayi, media check karein.")
+            await update.message.reply_text("Image load karne mein error aayi, link check karein.")
 
-    # 4. Agar user ne direct PHOTO bheji hai
-    elif photo:
-        # Telegram multiple sizes bhejta hai, sabse badi wali image ki file_id lenge
-        photo_file_id = photo[-1].file_id
-        USER_STATES[user_id] = {
-            "step": "waiting_for_title",
-            "image_url": photo_file_id
-        }
-        await update.message.reply_text("Dave Kumar ye film ya web series ka kya naam hai")
-
-    # 5. Agar user ne Image/Photo ka Link bheja hai
-    elif text and (text.startswith("http://") or text.startswith("https://")):
+    # 4. Agar user ne Image/Photo ka Link bheja hai
+    elif text.startswith("http://") or text.startswith("https://"):
         USER_STATES[user_id] = {
             "step": "waiting_for_title",
             "image_url": text
@@ -99,9 +85,7 @@ def main():
     TOKEN = os.environ.get("TOKEN")
     
     app = ApplicationBuilder().token(TOKEN).build()
-    
-    # Ab handlers me TEXT ke sath-sath PHOTO ko bhi allow kar diya gaya hai
-    app.add_handler(MessageHandler(filters.TEXT | filters.PHOTO & (~filters.COMMAND), handle_message))
+    app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
     
     print("Bot start ho gaya hai...")
     app.run_polling()
