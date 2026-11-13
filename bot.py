@@ -40,20 +40,21 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         choice = text.strip().lower() if text else ""
         
         if choice == "4k":
-            # Agar "4k" aaya toh content nahi pucha jayega, aur content block ko blank/skip kar denge
-            USER_STATES[user_id]["include_4k"] = False
-            USER_STATES[user_id]["skip_content"] = True
+            # Agar "4k" aaya toh content nahi pucha jayega, aur 4k fixed block ke sath message send hoga
+            USER_STATES[user_id]["include_4k"] = True
+            USER_STATES[user_id]["skip_content_prompt"] = True
+            USER_STATES[user_id]["content_text"] = ""  # Custom text blank rahega
             await send_movie_messages(update, user_id)
             return
         elif choice in ["no", "n", "nahi", "nhi", "naa", "na"]:
             USER_STATES[user_id]["include_4k"] = False
-            USER_STATES[user_id]["skip_content"] = False
+            USER_STATES[user_id]["skip_content_prompt"] = False
             USER_STATES[user_id]["step"] = "waiting_for_custom_content"
             await update.message.reply_text("btaiye kya kya likha jaye")
             return
         else:
             USER_STATES[user_id]["include_4k"] = True
-            USER_STATES[user_id]["skip_content"] = False
+            USER_STATES[user_id]["skip_content_prompt"] = False
             USER_STATES[user_id]["step"] = "waiting_for_content"
             await update.message.reply_text("kuch andar ka baat btao na...")
             return
@@ -70,7 +71,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await send_movie_messages(update, user_id)
         return
 
-    # 6. Agar user ne nayati shuruwat ki hai aur Photo (Link ya Direct Image) bheji hai
+    # 6. Agar user ne nayi shuruwat ki hai aur Photo (Link ya Direct Image) bheji hai
     elif image_input:
         USER_STATES[user_id] = {
             "step": "waiting_for_title",
@@ -86,33 +87,33 @@ async def send_movie_messages(update: Update, user_id: int):
     movie_title = state["movie_title"]
     movie_year = state["movie_year"]
     include_4k = state.get("include_4k", True)
-    skip_content = state.get("skip_content", False)
     content_text = state.get("content_text", "")
     
     # State clear kar dete hain
     del USER_STATES[user_id]
 
     try:
-        # Agar skip_content True hai (matlab user ne "4k" type kiya tha), toh middle_block nahi banega/blank rahega
-        if skip_content:
-            middle_block = ""
-        elif include_4k:
-            middle_block = f"\n\n<blockquote><tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> <b>4k</b> <tg-emoji emoji-id=\"5224607267797606837\">☄️</tg-emoji> {content_text} Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji></blockquote>\n"
+        # Agar 'No' select kiya tha toh 4k aur comet emoji nahi rahega, sirf content aayega
+        if not include_4k:
+            middle_block = f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> {content_text} Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>"
         else:
-            middle_block = f"\n\n<blockquote><tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> {content_text} Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji></blockquote>\n"
+            # Agar "4k" type kiya tha ya normal yes tha, toh 4k aur emojis ke sath format banega (content_text agar blank hoga toh wo khali rahega)
+            middle_block = f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> <b>4k</b> <tg-emoji emoji-id=\"5224607267797606837\">☄️</tg-emoji> {content_text} Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>"
 
         # Pehla caption
         caption_text_1 = (
-            f"<tg-emoji emoji-id=\"6312234398943023797\">🆕</tg-emoji> <b>{movie_title}</b> ({movie_year}) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>"
-            f"{middle_block}\n"
+            f"<tg-emoji emoji-id=\"6312234398943023797\">🆕</tg-emoji> <b>{movie_title}</b> ({movie_year}) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>\n\n"
+            f"<blockquote>{middle_block}</blockquote>\n\n"
+            " "
             "<tg-emoji emoji-id=\"6096080291347042802\">📥</tg-emoji> Added on <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
         )
         
         # Dusra caption
         caption_text_2 = (
             "<tg-emoji emoji-id=\"6159046264253059501\">🤩</tg-emoji><tg-emoji emoji-id=\"6156621398732182933\">🤩</tg-emoji><tg-emoji emoji-id=\"6158777532444316203\">🤩</tg-emoji><tg-emoji emoji-id=\"6156843319692367185\">🤩</tg-emoji><tg-emoji emoji-id=\"6156552632010806111\">🤩</tg-emoji><tg-emoji emoji-id=\"6156520617324582815\">🤩</tg-emoji><tg-emoji emoji-id=\"6156728837339091660\">🤩</tg-emoji><tg-emoji emoji-id=\"6156477856630181980\">🤩</tg-emoji><tg-emoji emoji-id=\"6159046264253059501\">🤩</tg-emoji>\n\n"
-            f"<tg-emoji emoji-id=\"6312234398943023797\">🆕</tg-emoji> <b>{movie_title}</b> ({movie_year}) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>"
-            f"{middle_block}\n"
+            f"<tg-emoji emoji-id=\"6312234398943023797\">🆕</tg-emoji> <b>{movie_title}</b> ({movie_year}) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>\n\n"
+            f"<blockquote>{middle_block}</blockquote>\n\n"
+            " "
             "<tg-emoji emoji-id=\"6096080291347042802\">📥</tg-emoji> Added on <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
         )
 
