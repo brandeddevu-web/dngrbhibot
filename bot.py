@@ -7,32 +7,41 @@ USER_STATES = {}
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
-    text = update.message.text
+    
+    # Check karein ki message mein text hai ya photo (attachment)
+    text = update.message.text or update.message.caption
+    photo = update.message.photo
 
-    if not text:
-        return
+    # Image URL ya Direct Photo handle karne ke liye
+    image_input = None
+    if photo:
+        # Agar user ne direct photo bheji hai, toh sabse high resolution wali photo ki file_id le lenge
+        image_input = photo[-1].file_id
+    elif text and (text.startswith("http://") or text.startswith("https://")):
+        # Agar user ne photo ka link bheja hai
+        image_input = text.strip()
 
-    # 1. Agar user ne movie/series ka naam diya hai
+    # 1. Agar user ne movie/series ka naam diya hai (jab state waiting_for_title ho)
     if user_id in USER_STATES and USER_STATES[user_id]["step"] == "waiting_for_title":
-        USER_STATES[user_id]["movie_title"] = text.strip()
+        USER_STATES[user_id]["movie_title"] = text.strip() if text else ""
         USER_STATES[user_id]["step"] = "waiting_for_year"
         
-        await update.message.reply_text("ye kaunse jamane ka film hai ya ye kaunsa season hai, kahi ye wo 69 toh nahi ")
+        await update.message.reply_text("ye kaunse jamane ka film hai ya ye kaunsa season hai batao na")
         return
 
     # 2. Agar user ne year/season ka reply diya hai
     elif user_id in USER_STATES and USER_STATES[user_id]["step"] == "waiting_for_year":
-        USER_STATES[user_id]["movie_year"] = text.strip()
+        USER_STATES[user_id]["movie_year"] = text.strip() if text else ""
         USER_STATES[user_id]["step"] = "waiting_for_4k_choice"
         
         await update.message.reply_text("4k speed me 69 baar download hoga ya nahi")
         return
 
-    # 3. Agar user ne 4k rakhne ka choice diya hai (Yes/No)
+    # 3. Agar user ne 4k rakhne ka choice diya hai (No/nahi/nhi/naa/na etc.)
     elif user_id in USER_STATES and USER_STATES[user_id]["step"] == "waiting_for_4k_choice":
-        choice = text.strip().lower()
+        choice = text.strip().lower() if text else ""
         
-        if choice in ["no", "n", "nahi"]:
+        if choice in ["no", "n", "nahi", "nhi", "naa", "na"]:
             USER_STATES[user_id]["include_4k"] = False
             USER_STATES[user_id]["step"] = "waiting_for_custom_content"
             await update.message.reply_text("btaiye kya kya likha jaye")
@@ -45,7 +54,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # 4. Agar user ne "No" ke baad custom content ka reply diya hai
     elif user_id in USER_STATES and USER_STATES[user_id]["step"] == "waiting_for_custom_content":
-        USER_STATES[user_id]["content_text"] = text.strip()
+        USER_STATES[user_id]["content_text"] = text.strip() if text else ""
         
         # Sabhi data mil gaya, ab messages send karenge
         await send_movie_messages(update, user_id)
@@ -53,24 +62,26 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # 5. Agar user ne normal content ka reply diya hai (jab 4k included hai)
     elif user_id in USER_STATES and USER_STATES[user_id]["step"] == "waiting_for_content":
-        USER_STATES[user_id]["content_text"] = text.strip()
+        USER_STATES[user_id]["content_text"] = text.strip() if text else ""
         
         # Sabhi data mil gaya, ab messages send karenge
         await send_movie_messages(update, user_id)
         return
 
-    # 6. Agar user ne Image/Photo ka Link bheja hai
-    elif text.startswith("http://") or text.startswith("https://"):
+    # 6. Agar user ne nayati shuruwat ki hai aur Photo (Link ya Direct Image) bheji hai
+    elif image_input:
         USER_STATES[user_id] = {
             "step": "waiting_for_title",
-            "image_url": text
+            "image_source": image_input,
+            "is_file_id": bool(photo)
         }
         await update.message.reply_text("Dave Kumar ye film ya web series ka kya naam hai")
 
 
 async def send_movie_messages(update: Update, user_id: int):
     state = USER_STATES[user_id]
-    image_url = state["image_url"]
+    image_source = state["image_source"]
+    is_file_id = state["is_file_id"]
     movie_title = state["movie_title"]
     movie_year = state["movie_year"]
     include_4k = state.get("include_4k", True)
@@ -103,28 +114,29 @@ async def send_movie_messages(update: Update, user_id: int):
             "<tg-emoji emoji-id=\"6096080291347042802\">📥</tg-emoji> Added on <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
         )
 
-        # Pehla message photo ke sath send karega
+        # Pehla message photo ke sath send karega (Chahe URL ho ya direct file_id)
         await update.message.reply_photo(
-            photo=image_url, 
+            photo=image_source, 
             caption=caption_text_1, 
             parse_mode="HTML"
         )
 
         # Turant baad doosra message send karega usi photo ke sath
         await update.message.reply_photo(
-            photo=image_url, 
+            photo=image_source, 
             caption=caption_text_2, 
             parse_mode="HTML"
         )
 
     except Exception as e:
-        await update.message.reply_text("Image load karne mein error aayi, link check karein.")
+        await update.message.reply_text("Image load karne mein error aayi, link ya photo check karein.")
 
 def main():
     TOKEN = os.environ.get("TOKEN")
     
     app = ApplicationBuilder().token(TOKEN).build()
-    app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
+    # Filters mein TEXT aur PHOTO dono ko allow kar diya hai
+    app.add_handler(MessageHandler((filters.TEXT | filters.PHOTO) & (~filters.COMMAND), handle_message))
     
     print("Bot start ho gaya hai...")
     app.run_polling()
