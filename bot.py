@@ -9,7 +9,6 @@ async def handle_image_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
             # Sirf specific words ko <b> aur </b> ke andar rakha hai taaki woh bold rahein
             caption_text = (
                 "🆕 <b>Title</b> (2026) 🔥\n\n"
-                " "
                 "<blockquote>" "➡️  <b>4k</b> ☄️ Added ❗️" "</blockquote>\n\n"
                 " "
                 "📥 Added on <b>HDHub4u</b>🕺"
