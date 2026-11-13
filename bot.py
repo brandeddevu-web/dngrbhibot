@@ -17,7 +17,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         USER_STATES[user_id]["movie_title"] = text.strip()
         USER_STATES[user_id]["step"] = "waiting_for_year"
         
-        await update.message.reply_text("ye kaunse jamane ka film ya kaunsa season hai")
+        await update.message.reply_text("ye kaunse jamane ka film hai ya ye kaunsa season hai, kahi ye wo 69 toh nahi ")
         return
 
     # 2. Agar user ne year/season ka reply diya hai
@@ -25,7 +25,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         USER_STATES[user_id]["movie_year"] = text.strip()
         USER_STATES[user_id]["step"] = "waiting_for_content"
         
-        await update.message.reply_text("kuch andar ka baat btaona")
+        await update.message.reply_text("kuch andar ka baat btao na...")
         return
 
     # 3. Agar user ne content ka reply diya hai
@@ -79,7 +79,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "step": "waiting_for_title",
             "image_url": text
         }
-        await update.message.reply_text("ye kaunsa film ya web series hai Dave Bhai")
+        await update.message.reply_text("Dave Kumar ye film ya web series ka kya naam hai")
 
 def main():
     TOKEN = os.environ.get("TOKEN")
