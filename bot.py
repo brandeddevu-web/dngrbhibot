@@ -5,11 +5,17 @@ from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, filte
 async def handle_image_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
     if text and (text.startswith("http://") or text.startswith("https://")):
-        if text.lower().endswith(('.png', '.jpg', '.jpeg', '.webp', '.bmp')):
-            try:
-                await update.message.reply_photo(photo=text, caption="Title")
-            except Exception as e:
-                await update.message.reply_text("Image load karne mein error aayi, link check karein.")
+        try:
+            caption_text = (
+                "🆕 Title (2026)🔥\n\n"
+                " "
+                "➡️ 4k ☄️ Added❗️\n\n"
+                " "
+                "📥 Added on HDHub4u🕺"
+            )
+            await update.message.reply_photo(photo=text, caption=caption_text)
+        except Exception as e:
+            await update.message.reply_text("Image load karne mein error aayi, link check karein.")
 
 def main():
     TOKEN = os.environ.get("TOKEN")
