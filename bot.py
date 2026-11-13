@@ -8,10 +8,10 @@ async def handle_image_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
             # Sirf specific words ko <b> aur </b> ke andar rakha hai taaki woh bold rahein
             caption_text = (
-                "🆕 <b>Title</b> (2026) 🔥\n\n"
-                "<blockquote>" "➡️  <b>4k</b> ☄️ Added ❗️" "</blockquote>\n\n"
+                "<tg-emoji emoji-id=\"6312234398943023797\">🆕</tg-emoji> <b>Title</b> (2026) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>\n\n"
+                "<blockquote>" "<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> <b>4k</b> <tg-emoji emoji-id=\"5224607267797606837\">☄️</tg-emoji> Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>" "</blockquote>\n\n"
                 " "
-                "📥 Added on <b>HDHub4u</b>🕺"
+                "<tg-emoji emoji-id=\"6096080291347042802\">📥</tg-emoji> Added on <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
             )
             await update.message.reply_photo(
                 photo=text, 
