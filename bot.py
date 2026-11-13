@@ -10,7 +10,7 @@ async def handle_image_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
             caption_text = (
                 "🆕 <b>Title</b> (2026) 🔥\n\n"
                 " "
-                "➡️  <b>4k</b> ☄️ Added❗️\n\n"
+                "<blockquote>" "➡️  <b>4k</b> ☄️ Added ❗️" "</blockquote>\n\n"
                 " "
                 "📥 Added on <b>HDHub4u</b>🕺"
             )
