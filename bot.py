@@ -25,7 +25,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         USER_STATES[user_id]["movie_year"] = text.strip()
         USER_STATES[user_id]["step"] = "waiting_for_4k_choice"
         
-        await update.message.reply_text("Kya isme '<b>4k</b> ☄️' rakhna hai? (Yes / No likhein)")
+        await update.message.reply_text("4k speed me 69 baar download hoga ya nahi")
         return
 
     # 3. Agar user ne 4k rakhne ka choice diya hai (Yes/No)
@@ -35,7 +35,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if choice in ["no", "n", "nahi"]:
             USER_STATES[user_id]["include_4k"] = False
             USER_STATES[user_id]["step"] = "waiting_for_custom_content"
-            await update.message.reply_text("btaiye kya likha jaye")
+            await update.message.reply_text("btaiye kya kya likha jaye")
             return
         else:
             USER_STATES[user_id]["include_4k"] = True
