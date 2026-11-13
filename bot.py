@@ -6,6 +6,7 @@ async def handle_image_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
     if text and (text.startswith("http://") or text.startswith("https://")):
         try:
+            # Sirf specific words ko <b> aur </b> ke andar rakha hai taaki woh bold rahein
             caption_text = (
                 "🆕 <b>Title</b> (2026) 🔥\n\n"
                 " "
@@ -13,14 +14,10 @@ async def handle_image_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 " "
                 "📥 Added on <b>HDHub4u</b>🕺"
             )
-            
-            # Yahan text ko quote kiya gaya hai
             await update.message.reply_photo(
                 photo=text, 
                 caption=caption_text, 
-                parse_mode="HTML",
-                reply_to_message_id=update.message.message_id,
-                quote="➡️  <b>4k</b> ☄️ Added❗️"
+                parse_mode="HTML"
             )
         except Exception as e:
             await update.message.reply_text("Image load karne mein error aayi, link check karein.")
