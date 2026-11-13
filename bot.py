@@ -7,7 +7,11 @@ async def handle_image_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if text and (text.startswith("http://") or text.startswith("https://")):
         if text.lower().endswith(('.png', '.jpg', '.jpeg', '.webp', '.bmp')):
             try:
-                await update.message.reply_photo(photo=text, caption="Ye lijiye aapki image!")
+                await update.message.reply_photo(photo=text, caption="🆕Pati Patni aur Raaz (2026)🔥
+
+➡️ 4k ☄️ Added❗️
+
+📥Added on HDHub4u🕺")
             except Exception as e:
                 await update.message.reply_text("Image load karne mein error aayi, link check karein.")
 
