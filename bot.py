@@ -17,7 +17,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         USER_STATES[user_id]["movie_title"] = text.strip()
         USER_STATES[user_id]["step"] = "waiting_for_year"
         
-        await update.message.reply_text("ye kaunse jamane ka film ya kaunsa season hai kahi 69 toh nahi")
+        await update.message.reply_text("ye kaunse jamane ka film ya kaunsa season hai")
         return
 
     # 2. Agar user ne year/season ka reply diya hai
@@ -25,7 +25,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         USER_STATES[user_id]["movie_year"] = text.strip()
         USER_STATES[user_id]["step"] = "waiting_for_content"
         
-        await update.message.reply_text("kuch andar ka baat btaona...")
+        await update.message.reply_text("kuch andar ka baat btaona")
         return
 
     # 3. Agar user ne content ka reply diya hai
@@ -79,10 +79,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "step": "waiting_for_title",
             "image_url": text
         }
-        await update.message.reply_text("Dave bhai ye kaunsa film ya web series hai")
+        await update.message.reply_text("ye kaunsa film ya web series hai Dave Bhai")
 
 def main():
     TOKEN = os.environ.get("TOKEN")
     
     app = ApplicationBuilder().token(TOKEN).build()
-    app
+    app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
+    
+    print("Bot start ho gaya hai...")
+    app.run_polling()
+
+if __name__ == '__main__':
+    main()
