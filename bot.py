@@ -93,13 +93,17 @@ async def send_movie_messages(update: Update, user_id: int):
     del USER_STATES[user_id]
 
     try:
-        # Agar 'No' select kiya tha toh sirf 4k aur comet emoji nahi rahega (content_text ab 4k ki jagah aa chuka hai)
+        # Agar 'No' select kiya tha toh sirf 4k aur comet emoji nahi rahega
         if not include_4k:
             middle_block = f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> {content_text} Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>"
         else:
-            # Yahan 4k aur content_text ki jagah aapas mein badal di gayi hai:
-            # Pehle content_text aaya, aur uske baad "4k ☄️" print hoga
-            middle_block = f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> {content_text} <b>4k</b> <tg-emoji emoji-id=\"5224607267797606837\">☄️</tg-emoji> Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>"
+            # Agar content_text maujud hai tabhi comet emoji dikhega, warna nahi
+            if content_text.strip():
+                emoji_4k_part = f"<tg-emoji emoji-id=\"5224607267797606837\">☄️</tg-emoji> <b>4k</b>"
+                middle_block = f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> {content_text} {emoji_4k_part} Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>"
+            else:
+                # Agar content text blank hai toh comet emoji v nahi aayega
+                middle_block = f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> <b>4k</b> Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>"
 
         # Pehla caption
         caption_text_1 = (
