@@ -93,12 +93,13 @@ async def send_movie_messages(update: Update, user_id: int):
     del USER_STATES[user_id]
 
     try:
-        # Agar 'No' select kiya tha toh 4k aur comet emoji nahi rahega, sirf content aayega
+        # Agar 'No' select kiya tha toh sirf 4k aur comet emoji nahi rahega (content_text ab 4k ki jagah aa chuka hai)
         if not include_4k:
             middle_block = f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> {content_text} Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>"
         else:
-            # Agar "4k" type kiya tha ya normal yes tha, toh 4k aur emojis ke sath format banega (content_text agar blank hoga toh wo khali rahega)
-            middle_block = f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> <b>4k</b> <tg-emoji emoji-id=\"5224607267797606837\">☄️</tg-emoji> {content_text} Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>"
+            # Yahan 4k aur content_text ki jagah aapas mein badal di gayi hai:
+            # Pehle content_text aaya, aur uske baad "4k ☄️" print hoga
+            middle_block = f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> {content_text} <b>4k</b> <tg-emoji emoji-id=\"5224607267797606837\">☄️</tg-emoji> Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>"
 
         # Pehla caption
         caption_text_1 = (
