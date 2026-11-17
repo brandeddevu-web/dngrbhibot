@@ -124,7 +124,7 @@ async def send_movie_messages(update: Update, user_id: int):
 
         # Teesra caption
         caption_text_3 = (
-            f"<tg-emoji emoji-id="6098177227524936926">↗️</tg-emoji> <b>{movie_title}</b> ({movie_year}) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>\n\n"
+            f"<tg-emoji emoji-id="6098177227524936926\">↗️</tg-emoji> <b>{movie_title}</b> ({movie_year}) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>\n\n"
             f"<blockquote>{middle_block}</blockquote>\n\n"
             " "
             "<tg-emoji emoji-id=\"5371081166013078244\">🍿</tg-emoji> Visit <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
