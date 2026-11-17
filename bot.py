@@ -122,6 +122,14 @@ async def send_movie_messages(update: Update, user_id: int):
             "<tg-emoji emoji-id=\"5371081166013078244\">🍿</tg-emoji> Visit <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
         )
 
+        # Teesra caption
+        caption_text_3 = (
+            f"<tg-emoji emoji-id="6098177227524936926">↗️</tg-emoji> <b>{movie_title}</b> ({movie_year}) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>\n\n"
+            f"<blockquote>{middle_block}</blockquote>\n\n"
+            " "
+            "<tg-emoji emoji-id=\"5371081166013078244\">🍿</tg-emoji> Visit <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
+        )
+
         # Pehla message photo ke sath send karega
         await update.message.reply_photo(
             photo=image_source, 
@@ -129,10 +137,17 @@ async def send_movie_messages(update: Update, user_id: int):
             parse_mode="HTML"
         )
 
-        # Turant baad doosra message send karega usi photo ke sath
+        # Dusra message send karega
         await update.message.reply_photo(
             photo=image_source, 
             caption=caption_text_2, 
+            parse_mode="HTML"
+        )
+
+        # Teesra message send karega
+        await update.message.reply_photo(
+            photo=image_source, 
+            caption=caption_text_3, 
             parse_mode="HTML"
         )
 
