@@ -40,10 +40,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         choice = text.strip().lower() if text else ""
         
         if choice == "4k":
-            # Agar "4k" aaya toh content nahi pucha jayega, aur 4k fixed block ke sath message send hoga
             USER_STATES[user_id]["include_4k"] = True
             USER_STATES[user_id]["skip_content_prompt"] = True
-            USER_STATES[user_id]["content_text"] = ""  # Custom text blank rahega
+            USER_STATES[user_id]["content_text"] = ""
             await send_movie_messages(update, user_id)
             return
         elif choice in ["no", "n", "nahi", "nhi", "naa", "na"]:
@@ -79,6 +78,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "is_file_id": bool(photo)
         }
         await update.message.reply_text("Dave Kumar ye film ya web series ka kya naam hai")
+    else:
+        # Agar user bina kisi process ke achanak text bhej de
+        if user_id not in USER_STATES:
+            await update.message.reply_text("Kripya pehle koi movie/series ka photo ya image link bhejein.")
 
 
 async def send_movie_messages(update: Update, user_id: int):
@@ -93,16 +96,13 @@ async def send_movie_messages(update: Update, user_id: int):
     del USER_STATES[user_id]
 
     try:
-        # Agar 'No' select kiya tha toh sirf 4k aur comet emoji nahi rahega
         if not include_4k:
             middle_block = f"<tg-emoji emoji-id=\"6043992250831082249\">✅</tg-emoji> {content_text} Added"
         else:
-            # Agar content_text maujud hai tabhi comet emoji dikhega, warna nahi
             if content_text.strip():
                 emoji_4k_part = f"<tg-emoji emoji-id=\"5224607267797606837\">☄️</tg-emoji> <b>4k</b>"
                 middle_block = f"<tg-emoji emoji-id=\"6043992250831082249\">✅</tg-emoji> {content_text} {emoji_4k_part} Added"
             else:
-                # Agar content text blank hai toh comet emoji v nahi aayega
                 middle_block = f"<tg-emoji emoji-id=\"6043992250831082249\">✅</tg-emoji> <b>4k</b> Added"
 
         # Pehla caption
@@ -122,34 +122,18 @@ async def send_movie_messages(update: Update, user_id: int):
             "<tg-emoji emoji-id=\"5371081166013078244\">🍿</tg-emoji> Visit <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
         )
 
-        # Teesra caption
+        # Teesra caption (Yahan syntax error fix kar diya gaya hai)
         caption_text_3 = (
-            f"<tg-emoji emoji-id="6098177227524936926\">↗️</tg-emoji> <b>{movie_title}</b> ({movie_year}) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>\n\n"
+            f"<tg-emoji emoji-id=\"6098177227524936926\">↗️</tg-emoji> <b>{movie_title}</b> ({movie_year}) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>\n\n"
             f"<blockquote>{middle_block}</blockquote>\n\n"
             " "
             "<tg-emoji emoji-id=\"5371081166013078244\">🍿</tg-emoji> Visit <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
         )
 
-        # Pehla message photo ke sath send karega
-        await update.message.reply_photo(
-            photo=image_source, 
-            caption=caption_text_1, 
-            parse_mode="HTML"
-        )
-
-        # Dusra message send karega
-        await update.message.reply_photo(
-            photo=image_source, 
-            caption=caption_text_2, 
-            parse_mode="HTML"
-        )
-
-        # Teesra message send karega
-        await update.message.reply_photo(
-            photo=image_source, 
-            caption=caption_text_3, 
-            parse_mode="HTML"
-        )
+        # Messages send karein
+        await update.message.reply_photo(photo=image_source, caption=caption_text_1, parse_mode="HTML")
+        await update.message.reply_photo(photo=image_source, caption=caption_text_2, parse_mode="HTML")
+        await update.message.reply_photo(photo=image_source, caption=caption_text_3, parse_mode="HTML")
 
     except Exception as e:
         await update.message.reply_text("Image load karne mein error aayi, link ya photo check karein.")
