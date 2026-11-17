@@ -95,22 +95,22 @@ async def send_movie_messages(update: Update, user_id: int):
     try:
         # Agar 'No' select kiya tha toh sirf 4k aur comet emoji nahi rahega
         if not include_4k:
-            middle_block = f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> {content_text} Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>"
+            middle_block = f"<tg-emoji emoji-id=\"6043992250831082249\">✅</tg-emoji> {content_text} Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>"
         else:
             # Agar content_text maujud hai tabhi comet emoji dikhega, warna nahi
             if content_text.strip():
                 emoji_4k_part = f"<tg-emoji emoji-id=\"5224607267797606837\">☄️</tg-emoji> <b>4k</b>"
-                middle_block = f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> {content_text} {emoji_4k_part} Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>"
+                middle_block = f"<tg-emoji emoji-id=\"6043992250831082249\">✅</tg-emoji> {content_text} {emoji_4k_part} Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>"
             else:
                 # Agar content text blank hai toh comet emoji v nahi aayega
-                middle_block = f"<tg-emoji emoji-id=\"6312153851126354884\">➡️</tg-emoji> <b>4k</b> Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>"
+                middle_block = f"<tg-emoji emoji-id=\"6043992250831082249\">✅</tg-emoji> <b>4k</b> Added <tg-emoji emoji-id=\"5274099962655816924\">❗️</tg-emoji>"
 
         # Pehla caption
         caption_text_1 = (
             f"<tg-emoji emoji-id=\"6312234398943023797\">🆕</tg-emoji> <b>{movie_title}</b> ({movie_year}) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>\n\n"
             f"<blockquote>{middle_block}</blockquote>\n\n"
             " "
-            "<tg-emoji emoji-id=\"6096080291347042802\">📥</tg-emoji> Added on <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
+            "<tg-emoji emoji-id=\"5371081166013078244\">🍿</tg-emoji> Visit <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
         )
         
         # Dusra caption
@@ -119,7 +119,7 @@ async def send_movie_messages(update: Update, user_id: int):
             f"<tg-emoji emoji-id=\"6312234398943023797\">🆕</tg-emoji> <b>{movie_title}</b> ({movie_year}) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>\n\n"
             f"<blockquote>{middle_block}</blockquote>\n\n"
             " "
-            "<tg-emoji emoji-id=\"6096080291347042802\">📥</tg-emoji> Added on <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
+            "<tg-emoji emoji-id=\"5371081166013078244\">🍿</tg-emoji> Visit <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
         )
 
         # Pehla message photo ke sath send karega
