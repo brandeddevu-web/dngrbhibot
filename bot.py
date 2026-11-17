@@ -19,6 +19,26 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif text and (text.startswith("http://") or text.startswith("https://")):
         image_input = text.strip()
 
+    # 0. Agar user ne shuru mein "insta", "ig", ya "instagram" bheja hai
+    if text and text.strip().lower() in ["insta", "ig", "instagram"]:
+        USER_STATES[user_id] = {
+            "step": "waiting_for_insta_link"
+        }
+        await update.message.reply_text("Bhai, Instagram reel ka link bhejo na!")
+        return
+
+    # Instagram link ka reply handle karne ke liye
+    if user_id in USER_STATES and USER_STATES[user_id]["step"] == "waiting_for_insta_link":
+        reel_link = text.strip() if text else ""
+        
+        # Yahan aap Instagram reel ke views nikalne ka code ya API integration dal sakte hain
+        # Abhi ke liye ek dummy views count ya message dikha rahe hain:
+        await update.message.reply_text(f"🔍 Reel check ki ja rahi hai...\nLink: {reel_link}\n\n📊 Is reel par lagbhag **[Views count here]** views hain!")
+        
+        # State clear kar dein
+        del USER_STATES[user_id]
+        return
+
     # 1. Agar user ne movie/series ka naam diya hai
     if user_id in USER_STATES and USER_STATES[user_id]["step"] == "waiting_for_title":
         USER_STATES[user_id]["movie_title"] = text.strip() if text else ""
@@ -116,7 +136,7 @@ async def send_movie_messages(update: Update, user_id: int):
         # Dusra caption
         caption_text_2 = (
             "<tg-emoji emoji-id=\"6159046264253059501\">🤩</tg-emoji><tg-emoji emoji-id=\"6156621398732182933\">🤩</tg-emoji><tg-emoji emoji-id=\"6158777532444316203\">🤩</tg-emoji><tg-emoji emoji-id=\"6156843319692367185\">🤩</tg-emoji><tg-emoji emoji-id=\"6156552632010806111\">🤩</tg-emoji><tg-emoji emoji-id=\"6156520617324582815\">🤩</tg-emoji><tg-emoji emoji-id=\"6156728837339091660\">🤩</tg-emoji><tg-emoji emoji-id=\"6156477856630181980\">🤩</tg-emoji><tg-emoji emoji-id=\"6159046264253059501\">🤩</tg-emoji>\n\n"
-            f"<tg-emoji emoji-id=\"6312234398943023797\">🆕</tg-emoji> <b>{movie_title}</b> ({movie_year}) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>\n\n"
+            f"<tg-emoji emoji-id=\"6312234398943023797\">🆕</tg-emoji> <b>{movie/title}</b> ({movie_year}) <tg-emoji emoji-id=\"5325670588461632571\">🔥</tg-emoji>\n\n"
             f"<blockquote>{middle_block}</blockquote>\n\n"
             " "
             "<tg-emoji emoji-id=\"6096080291347042802\">📥</tg-emoji> Added on <b>HDHub4u</b><tg-emoji emoji-id=\"5190758974135212829\">🕺</tg-emoji>"
