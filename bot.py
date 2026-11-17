@@ -6,17 +6,19 @@ from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, filte
 # Conversation state maintain karne ke liye dictionary
 USER_STATES = {}
 
-# Instagram reel se views nikalne ka function
-def get_insta_reel_views(url: int | str):
+# Instagram reel se views nikalne ka function (Bina cookies ke)
+def get_insta_reel_views(url: str):
     ydl_opts = {
         'quiet': True,
         'extract_flat': True,
+        'skip_download': True,
     }
+    
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
-            # yt-dlp 'view_count' key se views deta hai
-            views = info.get('view_count', None)
+            # Views ya play count nikalne ki koshish karein
+            views = info.get('view_count') or info.get('play_count')
             if views:
                 return views
     except Exception as e:
@@ -55,11 +57,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         views = get_insta_reel_views(reel_link)
         
         if views is not None:
-            # Agar views mil gaye toh formatted number dikhayein
             formatted_views = f"{views:,}"
             await update.message.reply_text(f"📊 Is Instagram reel par total **{formatted_views}** views hain! 🔥")
         else:
-            await update.message.reply_text("❌ Views fetch nahi ho paye. Ho sakta hai link galat ho ya reel private ho.")
+            await update.message.reply_text("❌ Views fetch nahi ho paye. Railway IP ko Instagram ne block kar diya hai, isliye bina cookies ke views show hona mushkil hai.")
         
         # State clear kar dein
         del USER_STATES[user_id]
